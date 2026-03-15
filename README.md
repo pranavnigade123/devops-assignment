@@ -256,13 +256,21 @@ Node.js Express Application
 
 # Screenshots
 
-Docker container running (`docker ps`)
+### Docker container running
 
-Application running through Docker (`http://VM-IP:3000`)
+![Docker container running](screenshots/docker-ps.jpeg)
 
-Application running through Nginx (`http://VM-IP`)
+### Application running through Docker
 
-Nginx configuration showing reverse proxy
+![Application via Docker](screenshots/docker-app.jpeg)
+
+### Application running through Nginx
+
+![Application via Nginx](screenshots/nginx-app.jpeg)
+
+### Nginx reverse proxy configuration
+
+![Nginx configuration](screenshots/nginx-config.jpeg)
 
 ---
 
