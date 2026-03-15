@@ -29,8 +29,11 @@ Direct container access:
 http://VM-IP:3000
 ```
 
-Through Nginx reverse proxy:
-
+```
+The Nginx configuration is part of the VM environment, not the repository.
+When someone clones the repo they can run the Docker container directly.
+To reproduce the full architecture they would need to configure Nginx.
+```
 ```
 http://VM-IP
 ```
