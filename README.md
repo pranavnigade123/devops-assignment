@@ -1,16 +1,43 @@
 # DevOps Assignment – Node.js + Docker + Nginx
 
-## Project Overview
+## Quick Start – How to Run the Application
+
+1. Clone the repository
+
+git clone https://github.com/pranavnigade123/devops-assignment.git
+cd devops-assignment
+
+2. Build the Docker image
+
+docker build -t devops-assignment .
+
+3. Run the Docker container
+
+docker run -d -p 3000:3000 devops-assignment
+
+4. Access the application
+
+Direct container access:
+
+http://VM-IP:3000
+
+Through Nginx reverse proxy:
+
+http://VM-IP
+
+Expected output:
+
+DevOps Assignment Working
+
+---
+
+# Project Overview
 
 This project demonstrates a simple DevOps workflow where a Node.js application is containerized using Docker and served through Nginx as a reverse proxy.
 
-The application returns the message:
+The application returns the message **“DevOps Assignment Working”** when the root route `/` is accessed.
 
-**"DevOps Assignment Working"**
-
-when accessed from the browser.
-
-The entire setup was implemented inside an Ubuntu Virtual Machine.
+The entire environment runs inside an **Ubuntu Virtual Machine created using VirtualBox**.
 
 ---
 
@@ -30,24 +57,21 @@ The entire setup was implemented inside an Ubuntu Virtual Machine.
 
 The assignment required the environment to be created inside a VirtualBox VM.
 
-A VM was created using **Ubuntu Server 24.04**.
+An Ubuntu Server VM was created and configured with Docker, Git, and Nginx.
 
 While the VirtualBox terminal works, the screen size was small and difficult to read.
-To simulate a real server environment and improve usability, **SSH access was configured** using VirtualBox port forwarding.
+To improve usability and simulate a real server environment, the VM was accessed remotely using **SSH with port forwarding**.
 
-The VM was then accessed from the host terminal using:
+Connection command used:
 
-```
 ssh pranav@localhost -p 2222
-```
 
-This reflects real DevOps practices where servers are usually managed remotely using SSH instead of a graphical interface.
+This approach reflects real DevOps practices where servers are usually managed remotely using SSH instead of a graphical interface.
 
 ---
 
 # Project Structure
 
-```
 devops-assignment
 │
 ├── Dockerfile
@@ -55,10 +79,9 @@ devops-assignment
 ├── screenshots
 │
 └── app
-    ├── server.js
-    ├── package.json
-    └── package-lock.json
-```
+  ├── server.js
+  ├── package.json
+  └── package-lock.json
 
 ---
 
@@ -68,11 +91,9 @@ A simple Express application was created.
 
 File: `app/server.js`
 
-The application listens on **port 3000** and returns the message:
+The application listens on **port 3000** and returns:
 
-```
 DevOps Assignment Working
-```
 
 when the root route `/` is accessed.
 
@@ -80,260 +101,168 @@ when the root route `/` is accessed.
 
 # Docker Containerization
 
-A Dockerfile was written to package the application with its dependencies.
+A Dockerfile was written to package the Node.js application with all required dependencies.
 
-Main steps performed by Docker:
+Steps performed by Docker:
 
-1. Use an official Node.js base image
-2. Copy the application files
+1. Use the official Node.js base image
+2. Copy application files
 3. Install dependencies
-4. Run the Node.js server
+4. Start the Node.js server
 
 Docker image was built using:
 
-```
 docker build -t devops-assignment .
-```
 
-The container was started using:
+Container was started using:
 
-```
 docker run -d -p 3000:3000 devops-assignment
-```
 
-This command maps:
+This creates the port mapping:
 
-```
-VM port 3000 → container port 3000
-```
+VM port 3000 → Docker container port 3000
 
 So the application becomes accessible at:
 
-```
 http://VM-IP:3000
-```
 
 ---
 
 # Nginx Reverse Proxy Configuration
 
-Nginx was installed on the VM and configured as a reverse proxy.
+Nginx was configured to forward incoming HTTP requests to the Docker container.
 
 Configuration file edited:
 
-```
 /etc/nginx/sites-available/default
-```
 
-The following block was added:
+Configuration used:
 
-```
 location / {
-    proxy_pass http://localhost:3000;
+proxy_pass http://localhost:3000;
 }
-```
 
-This means that any request received on **port 80** will be forwarded to **port 3000** where the Docker container is running.
+After updating the configuration, Nginx was restarted:
 
-After editing the configuration, Nginx was restarted:
-
-```
 sudo systemctl restart nginx
-```
 
-Now the application can be accessed simply using:
+Now the application can be accessed without specifying port 3000:
 
-```
 http://VM-IP
-```
-
-without specifying port 3000.
 
 ---
 
 # VM IP Address
 
-VM IP obtained using:
+The VM IP was obtained using:
 
-```
 ip a
-```
 
 VM IP:
 
-```
 10.0.2.15
-```
 
 Application endpoints:
 
 Direct Docker access:
 
-```
 http://10.0.2.15:3000
-```
 
 Through Nginx reverse proxy:
 
-```
 http://10.0.2.15
-```
 
 ---
 
 # How the Request Flows (Practical Explanation)
 
-This section explains what actually happens when a user opens the application in a browser.
+When a user opens the application in a browser, the request passes through several components.
 
-### Step 1 — Browser sends request
+Step 1 — Browser sends request
 
-When a user enters:
+The user enters:
 
-```
 http://10.0.2.15
-```
 
-the browser sends an HTTP request to the VM on **port 80**.
-
-Port 80 is the default HTTP port.
+The browser sends an HTTP request to the VM on **port 80**.
 
 ---
 
-### Step 2 — Nginx receives the request
+Step 2 — Nginx receives the request
 
 Nginx is running on the VM and listening on **port 80**.
 
-So the request first reaches **Nginx**, not the Node.js application.
+Instead of serving a static webpage, Nginx checks its configuration and finds this rule:
 
-Nginx checks its configuration file and finds this rule:
-
-```
 proxy_pass http://localhost:3000;
-```
 
-This tells Nginx:
-
-"Forward this request to another service running on port 3000."
+This rule tells Nginx to forward the request to another service running on port 3000.
 
 ---
 
-### Step 3 — Request forwarded to Docker container
+Step 3 — Request forwarded to Docker container
 
-The request is forwarded to:
+Nginx forwards the request to:
 
-```
 localhost:3000
-```
 
-Earlier, when running the Docker container, this mapping was created:
+Earlier when the container was started, the following mapping was created:
 
-```
 VM:3000 → Docker Container:3000
-```
 
-This means any request reaching **port 3000 on the VM** is sent to the container.
+So requests reaching port 3000 on the VM are sent directly to the Docker container.
 
 ---
 
-### Step 4 — Node.js application processes request
+Step 4 — Node.js application processes request
 
-Inside the Docker container, the **Node.js Express application** is running.
+Inside the container, the Node.js Express application is running.
 
-The application receives the request at route:
+It receives the request for the route `/` and returns the response:
 
-```
-/
-```
-
-and returns the response:
-
-```
 DevOps Assignment Working
-```
 
 ---
 
-### Step 5 — Response travels back to the browser
+Step 5 — Response travels back to the browser
 
-The response goes back through the same path:
+The response travels back through the same path:
 
-```
 Node.js App
-   ↓
+↓
 Docker Container
-   ↓
+↓
 Nginx Reverse Proxy
-   ↓
+↓
 Browser
-```
 
-The browser then displays:
+The browser then displays the message:
 
-```
 DevOps Assignment Working
-```
 
 ---
 
 # Architecture Diagram
 
-```
 Browser
-   ↓
+↓
 Nginx (Port 80)
-   ↓
+↓
 Docker Container (Port 3000)
-   ↓
+↓
 Node.js Express Application
-   ↓
-Response returned to Browser
-```
 
 ---
 
 # Screenshots
 
-## Docker Container Running
+Docker container running (`docker ps`)
 
-Output of:
+Application running through Docker (`http://VM-IP:3000`)
 
-```
-docker ps
-```
+Application running through Nginx (`http://VM-IP`)
 
-![Docker Container](screenshots/docker-ps.png)
-
----
-
-## Application via Docker
-
-Accessing the application directly through Docker:
-
-```
-http://VM-IP:3000
-```
-
-![App Docker](screenshots/app-docker.png)
-
----
-
-## Application via Nginx
-
-Accessing the application through Nginx reverse proxy:
-
-```
-http://VM-IP
-```
-
-![App Nginx](screenshots/app-nginx.png)
-
----
-
-## Nginx Configuration
-
-Reverse proxy configuration inside Nginx.
-
-![Nginx Config](screenshots/nginx-config.png)
+Nginx configuration showing reverse proxy
 
 ---
 
