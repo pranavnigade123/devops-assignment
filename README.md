@@ -186,17 +186,44 @@ app_3
 ```
 
 ---
+# ⚖️ Load Balancing Approach
 
-## 🔄 Load Balancing
+In this setup, load balancing is achieved using Docker Compose service networking rather than explicit Nginx upstream configuration.
 
-* Nginx forwards requests to the service `app`
-* Docker distributes requests across containers using round-robin
+Nginx forwards incoming requests to the service name `app`:
 
-Example response:
-
+```nginx
+proxy_pass http://app:3000;
 ```
-DevOps Assignment Running 🚀 from <container_id>
+
+Docker internally resolves the service name and distributes requests across multiple container instances (`app_1`, `app_2`, `app_3`) using a round-robin mechanism.
+
+---
+
+### 🧠 Why this approach was used
+
+* Docker Compose provides built-in service discovery and load balancing
+* It simplifies configuration without requiring manual upstream definitions
+* Container names are dynamic, making static Nginx upstream configuration less flexible
+
+---
+
+### 🔄 Alternative approach (Nginx load balancing)
+
+Load balancing can also be implemented using Nginx upstream configuration:
+
+```nginx
+upstream app_servers {
+    server app_1:3000;
+    server app_2:3000;
+    server app_3:3000;
+}
 ```
+
+However, in dynamic container environments, Docker’s internal load balancing is commonly used for simplicity and flexibility.
+
+---
+
 
 ---
 
