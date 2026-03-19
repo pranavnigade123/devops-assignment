@@ -13,6 +13,7 @@ app.use((req, res, next) => {
 
 app.get('/', (req, res) => {
     const hostname = os.hostname();
+    console.log("CI test change");
     res.send(`${MESSAGE} from ${hostname}`);
 });
 
