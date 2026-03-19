@@ -323,18 +323,32 @@ Browser
 * Logging and monitoring basics
 * CI pipeline using GitHub Actions
 
----
+# 📸 Screenshots
 
-# 📸 Screenshots (To Add)
+### 🔹 Docker Containers Running
 
-Add the following:
-
-* `docker ps` showing multiple containers
-* Application running (`http://VM-IP`)
-* `/health` endpoint
-* GitHub Actions success
+![Docker Containers](screenshots/docker-ps.png)
 
 ---
+
+### 🔹 Application Running (Home Page)
+
+![Application Home](screenshots/app-home.png)
+
+---
+
+### 🔹 Health Endpoint
+
+![Health Endpoint](screenshots/health.png)
+
+---
+
+### 🔹 CI Pipeline Success (GitHub Actions)
+
+![CI Pipeline](screenshots/ci-success.png)
+
+---
+
 
 # 👨‍💻 Author
 
